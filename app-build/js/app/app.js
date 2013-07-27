@@ -1,0 +1,1 @@
+define(["app/router/router"],function(e){var t=function(){var t=new e;t.navigateTo("dashboard")};return{init:t}});

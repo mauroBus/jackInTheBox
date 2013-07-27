@@ -1,0 +1,32 @@
+@import '../../../../variables.less';
+
+.sideBar {
+  border: 2px solid @colorBorderBlue;
+
+/*  .sideBarItem:hover {
+    background-color: lightgray;
+    cursor: pointer;
+  }
+  .sideBarItem:active {
+    background-color: gray;
+  }*/
+}
+
+
+nav[role="navigation"] ul {
+  /*width: 25%;*/
+}
+nav[role="navigation"] ul li a {
+  display: block;
+  padding: 5px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+}
+nav[role="navigation"] ul li a:focus,
+nav[role="navigation"] ul li a:hover {
+  background: #eee;
+}
+nav[role="navigation"] ul li a:active {
+  background: #ddd;
+}

@@ -1,0 +1,1 @@
+define(["knockout","jquery","basicViewModel","text!./header.view.html"],function(e,t,n,r){var i=n.extend({initialize:function(e){this.template=r}});return i});

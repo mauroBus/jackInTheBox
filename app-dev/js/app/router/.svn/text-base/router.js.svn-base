@@ -1,0 +1,203 @@
+/**
+ * Manager of the application main inter-module navegation.
+ *
+ * @author  Mauro Buselli <mauro.buselli@globant.com>
+ */
+define([
+    'jquery',
+    'modules/dashboard/dashboard.viewmodel',
+    'modules/header/header.viewmodel',
+    'modules/createcostcenter/createcostcenter.viewmodel',
+    'modules/modifycostcenter/modifycostcenter.viewmodel'
+  ], function($, DashboardModule, HeaderModule, CreateCostCenterModule, ModifyCostCenterModule) {
+
+    var Router = function(options) {
+
+      this.user = options.user;
+
+      // stores the application modules
+      this.modules = {
+        landingPage: null,
+        header: null,
+        dashboard: null,
+        createcostcenter: null,
+        modifycostcenter: null
+      };
+
+      // Routes definition (routeName: action):
+      this.routes = {
+        defaultPage: 'loadLandingPage',
+        landingPage: 'loadLandingPage',
+        dashboard: 'loadDashboardModule',
+        createcostcenter: 'loadCreateCostCenterModule',
+        modifycostcenter: 'loadModifyCostCenterModule'
+      };
+
+      this.currentModule = null;
+
+      var _this = this;
+
+      this.addRoute = function(route, action) {
+        _this.routes[route] = action;
+      };
+
+      /**
+       * Navigates to a module. The list of the module names are in the
+       * routes description.
+       * @param  {String} module           next module
+       * @param  {boolean} destroyCurrent  'true' to remove the current module.
+       */
+      this.navigateTo = function(module, destroyCurrent) {
+        var nextModule = this.routes[module] ? module : 'defaultPage';
+
+        var args = Array.prototype.slice.call(arguments);
+        var navArgs = args.slice(2);
+
+        if (nextModule === this.currentModule) {
+          return;
+        }
+
+        if (!this.currentModule) { // first time, first module to load
+          var f = this.routes[nextModule];
+          this[f].apply(this, navArgs);
+        }
+        else { // other module is beeing displayed -> hide it.
+          this.modules[this.currentModule].hide().done(function() {
+            var f = _this.routes[nextModule];
+            _this[f].apply(_this, navArgs);
+          });
+        }
+
+        if (destroyCurrent) {
+          this.modules[this.currentModule].remove();
+          this.modules[this.currentModule] = null;
+        }
+        this.currentModule = (nextModule === 'landingPage') ? 'dashboard' : nextModule;
+      };
+
+
+      /*********************************************
+       * Action declaration:                       *
+       *********************************************/
+      this.loadLandingPage = function() {
+        this.loadHeader();
+        this.loadDashboardModule();
+        this.modules.landingPage = this.modules.dashboard;
+      };
+
+      this.loadHeader = function() {
+        this.modules.header = new HeaderModule({
+          el: '#header',
+          effects: { // default effects
+            onShow: {
+              effect: 'fade',
+              easing: 'linear',
+              duration: 0
+            },
+            onHide: {
+              effect: 'slide',
+              easing: 'linear',
+              mode: 'hide',
+              direction: 'up',
+              duration: 0
+            }
+          },
+          userModel: this.user
+        });
+        this.modules.header.render();
+        this.modules.header.show();
+      };
+
+      this.loadDashboardModule = function() {
+        if (this.modules.dashboard) {
+          this.modules.dashboard.show();
+        }
+        else {
+          this.modules.dashboard = new DashboardModule({
+            el: '#dashboard',
+            effects: {
+              onShow: {
+                effect: 'fade',
+                easing: 'linear',
+                duration: 'fast'
+              },
+              onHide: {
+                effect: 'slide',
+                easing: 'linear',
+                mode: 'hide',
+                direction: 'up',
+                duration: 800
+              }
+            },
+            userModel: this.user
+          });
+          this.modules.dashboard.render();
+          this.modules.dashboard.show();
+        }
+      };
+
+      this.loadCreateCostCenterModule = function() {
+        if (!this.modules.createcostcenter) {
+          this.modules.createcostcenter = new CreateCostCenterModule({
+            el: '#createCostCenter',
+            effects: {
+              onShow: {
+                effect: 'slide',
+                easing: 'linear',
+                duration: 'fast'
+              },
+              onHide: {
+                effect: 'slide',
+                easing: 'linear',
+                mode: 'hide',
+                direction: 'right',
+                duration: 'fast'
+              }
+            }
+          });
+
+          this.modules.createcostcenter.render();
+          this.modules.createcostcenter.show();
+        }
+        else {
+          this.modules.createcostcenter.show();
+        }
+      };
+
+      this.loadModifyCostCenterModule = function(params) {
+        var modifyArgs = {
+          el: '#modifyCostCenter',
+          effects: {
+            onShow: {
+              effect: 'slide',
+              easing: 'linear',
+              duration: 'fast'
+            },
+            onHide: {
+              effect: 'slide',
+              easing: 'linear',
+              mode: 'hide',
+              direction: 'right',
+              duration: 'fast'
+            }
+          }
+        };
+
+        modifyArgs = $.extend(modifyArgs, params);
+
+        if (!this.modules.modifycostcenter) {
+          this.modules.modifycostcenter = new ModifyCostCenterModule(modifyArgs);
+
+          this.modules.modifycostcenter.render();
+          this.modules.modifycostcenter.show();
+        }
+        else {
+          this.modules.modifycostcenter.show();
+        }
+      };
+
+    };
+
+    return Router;
+  }
+);
