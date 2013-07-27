@@ -1,1 +1,0 @@
-define(["basicViewModel","text!./loading.view.html"],function(e,t){var n=e.extend({simultaneousShows:null,init:function(e){this._super(e),this.template=t,this.simultaneousShows=0},show:function(e){this.simultaneousShows++,this.simultaneousShows===1&&this._super(e)},hide:function(e){this.simultaneousShows--,this.simultaneousShows<1&&this._super(e)}});return n});
