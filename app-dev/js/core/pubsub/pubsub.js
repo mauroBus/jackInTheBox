@@ -1,4 +1,6 @@
 /**
+ * Publish Subscribe Events Manager
+ *
  * trigger: allows trigger a topic event with any number of arguments
  *          returns a list with the results of the 'topic' subscriptors.
  * on: allows subscribe callbacks to topics.
@@ -8,18 +10,20 @@
  */
 define(function () {
 
-  var BrawlerPubSub = function() {
-    this.topics = {}; // hash: {topic -> {action, context}}
+  var EventManager = function() {
+    this._topics = {}; // hash: {topic -> {action, context}}
   };
 
-  BrawlerPubSub.prototype.trigger = function(topic) {
+  var proto = EventManager.prototype;
+
+  proto.trigger = function(topic) {
     var i, action, ctxt,
       results = [], partialResult,
       args = Array.prototype.slice.call(arguments, 1);
 
-    for (i in this.topics[topic]) {
-      action = this.topics[topic][i].action;
-      ctxt = this.topics[topic][i].context;
+    for (i in this._topics[topic]) {
+      action = this._topics[topic][i].action;
+      ctxt = this._topics[topic][i].context;
       partialResult = action.apply(ctxt, args);
       if (partialResult !== undefined) {
         results.push(partialResult);
@@ -28,22 +32,29 @@ define(function () {
     return results;
   };
 
-  BrawlerPubSub.prototype.on = function(topic, action, context) {
-    this.topics[topic] = this.topics[topic] || [];
-    this.topics[topic].push({
+  proto.on = function(topic, action, context) {
+    this._topics[topic] = this._topics[topic] || [];
+    this._topics[topic].push({
       action: action,
       context: (context || this)
     });
   };
 
-  BrawlerPubSub.prototype.off = function(topic, callback) {
-    var i, action, subs = this.topics[topic];
+  proto.off = function(topic, callback) {
+    var i, action, subs = this._topics[topic];
     for (i in subs) {
       action = subs[i].action;
       if (callback === action) {
         subs = subs.splice(i, 1);
         return;
       }
+    }
+  };
+
+  EventManager.mergeEvents = function(topicsTo, topicFrom) {
+    for (var topic in topicFrom) {
+      topicsTo[topic] = topicsTo[topic] || [];
+      topicsTo[topic].push.apply(topicsTo[topic], topicFrom[topic]);
     }
   };
 
@@ -54,22 +65,41 @@ define(function () {
    * @param  {String} offAttr     Method name corresponding to the 'off' (unsubscribe).
    * @param  {String} triggerAttr Method name corresponding to the 'trigger' (unsubscribe).
    */
-  BrawlerPubSub.prototype.augment = function(object, onAttr, offAttr, triggerAttr) {
+  EventManager.augmentParasitic = function(object, onAttr, offAttr, triggerAttr) {
     var that = this;
     object[triggerAttr || 'trigger'] = function() {
-      this.topics = that.topics;
+      this._topics = that._topics;
       return that.trigger.apply(this, arguments);
     };
     object[onAttr || 'on'] = function() {
-      this.topics = that.topics;
+      this._topics = that._topics;
       that.on.apply(this, arguments);
     };
     object[offAttr || 'off'] = function() {
-      this.topics = that.topics;
+      this._topics = that._topics;
       that.off.apply(this, arguments);
     };
-    // object['topics'] = this.topics;
-  }
+    // object['topics'] = this._topics;
+  };
 
-  return BrawlerPubSub;
+  /**
+   * Adds a publish subscribe functionality to an object, given its event object.
+   */
+  EventManager.augment = function(object, topcisObj, onAttr, offAttr, triggerAttr) {
+    var that = this;
+    object[triggerAttr || 'trigger'] = function() {
+      this._topics = topcisObj;
+      return EventManager.prototype.trigger.apply(this, arguments);
+    };
+    object[onAttr || 'on'] = function() {
+      this._topics = topcisObj;
+      EventManager.prototype.on.apply(this, arguments);
+    };
+    object[offAttr || 'off'] = function() {
+      this._topics = topcisObj;
+      EventManager.prototype.off.apply(this, arguments);
+    };
+  };
+
+  return EventManager;
 });

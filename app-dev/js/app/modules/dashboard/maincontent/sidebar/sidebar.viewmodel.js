@@ -23,16 +23,12 @@ define([
       },
 
       onItemClick: function(item, event) {
-        var rst = this.trigger('sideBarClick', item);
-
-        if (item === this.items[4]) {
-          this.trigger('item5Clicked');
-        }
+        var rst = this.trigger('itemEvent', item);
 
         if (this.$lastActive) {
-          this.$lastActive.toggleClass('active');
+          this.$lastActive.removeClass('active');
         }
-        this.$lastActive = $(event.target);
+        this.$lastActive = $(event.currentTarget);
         this.$lastActive.addClass('active');
       }
     });

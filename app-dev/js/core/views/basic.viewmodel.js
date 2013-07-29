@@ -12,7 +12,7 @@ define([
    * @version 0.6
    * @author  Mauro Buselli <mauro.buselli@globant.com>
    */
-  function(Inheritance, ko, $, jQueryUI, PubSub) {
+  function(Inheritance, ko, $, jQueryUI, EventEmmiter) {
     'use strict';
     /**
     * This is a basic View Model that has the basic initialize functionality
@@ -87,17 +87,17 @@ define([
         }
 
         this.state = 'initialized';
-        this.uuid = this.staticId.value++;//this.getUUID();
+        this.uuid = this.staticId.value++;//this._getUUID();
 
-        // if (this.initialize && $.isFunction(this.initialize)) {
-        //   this.initialize.call(this, options);
-        // }
+        this._initEventChannel();
         this.initialize.apply(this, arguments);
       },
 
-      // Initialize is an empty function by default. Override it with your own
-      // initialization logic.
-      initialize: function(){},
+      /**
+       * Initialize is an empty function by default. Override it with your own
+       * view's initialization logic.
+       */
+      initialize: function() {},
 
       /**
        * Renderizes the view content on the screen
@@ -115,7 +115,7 @@ define([
         this.$el.html(this.template);
 
         if (this.dataBind) {
-          this.insertDinamicBindings();
+          this._insertDinamicBindings();
         }
 
         ko.applyBindings(this, this.$el[0]);
@@ -260,7 +260,7 @@ define([
        * @param  {String} root The start name of the unique ID.
        * @return {String} UUID.
        */
-      getUUID: function(root) {
+      _getUUID: function(root) {
         var uuid = 'yyxxxxxxxxxx'.replace(/[xy]/g, function(c) {
           var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
           return v.toString(16);
@@ -275,13 +275,13 @@ define([
        * @param  {Object} options The object bindings
        * @return {String} The bindings converted to string
        */
-      parseBindingsToString: function(options) {
+      _parseBindingsToString: function(options) {
         var stringBindings = [];
         for (var key in options) {
           var val = options[key];
           switch (typeof val) {
             case 'string': stringBindings.push(key + ':' + val); break;
-            case 'object': stringBindings.push(key + ':{' + this.parseBindingsToString(val) + '}'); break;
+            case 'object': stringBindings.push(key + ':{' + this._parseBindingsToString(val) + '}'); break;
             case 'function': stringBindings.push(key + ':' + val.toString()); break;
           }
         }
@@ -289,27 +289,43 @@ define([
       },
 
       /**
-       * Inserts dinamic data-bindings into the view's elements
+       * inserts dinamic data-bindings into the view's elements
        * @private
        */
-      insertDinamicBindings: function() {
+      _insertDinamicBindings: function() {
         var elemDB, attrs, $domEl, oldDBs;
         for (elemDB in this.dataBind) {
-          attrs = this.parseBindingsToString(this.dataBind[elemDB]);
+          attrs = this._parseBindingsToString(this.dataBind[elemDB]);
           if (attrs) {
             $domEl = $(this.el + ' ' + elemDB);
-            // oldDBs = $domEl.attr('data-bind');
-            // if (oldDBs) {
-            //   $.parseJSON(oldDBs);
-            // }
+            oldDBs = $domEl.attr('data-bind');
+            if (oldDBs) {
+              // $.parseJSON(oldDBs);
+              attrs += ',' + oldDBs;
+            }
             $domEl.attr('data-bind', attrs);
           }
         }
       },
 
-      setFamilyChannel: function(channel) {
+      /**
+       * set the family (pub/sub) event channel
+       * @param  {Object} channel the new (shared) channel
+       * @private
+       */
+      _setFamilyChannel: function(channel) {
+        EventEmmiter.mergeEvents(channel, this._familyChannel);
         this._familyChannel = channel;
-        this._familyChannel.augment(this, 'on', 'off', 'trigger');
+        EventEmmiter.augment.call(this, this, this._familyChannel, 'on', 'off', 'trigger');
+      },
+
+      /**
+       * creates the messaging pub/sub channel
+       * @private
+       */
+      _initEventChannel: function() {
+        this._familyChannel = {};
+        EventEmmiter.augment.call(this, this, this._familyChannel);
       }
 
     });

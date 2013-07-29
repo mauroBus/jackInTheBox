@@ -69,8 +69,8 @@ body {
 
 /* Selection colours (easy to forget) */
 
-::selection     {background: rgb(255,255,158);}
-::-moz-selection  {background: rgb(255,255,158);}
+::selection     {background: #BCDAFC;}
+::-moz-selection  {background: #BCDAFC;}
 img::selection    {background: transparent;}
 img::-moz-selection {background: transparent;}
 body {-webkit-tap-highlight-color: rgb(255,255,158);}
@@ -153,8 +153,43 @@ px      68    160    252    344    436    */
 
 
 
+@import './variables.less';
+@import './mixins.less';
 
+
+// * {
+//   -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+//      -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+//           box-sizing: border-box;         /* Opera/IE 8+ */
+// }
 
 li {
   list-style: none outside none;
+}
+
+a, a:link, a:visited {
+  color: #2790ae;
+  text-decoration: none;
+}
+
+.jackBoxWidget {
+  background-color: rgb(87, 82, 75);
+  border: 2px solid rgb(204, 204, 204);
+  .rounded-corners(6px);
+
+  .subTitle {
+    color: rgb(214, 180, 94);
+  }
+}
+
+.viewModel {
+  .rounded-corners(10px);
+}
+
+.viewModelTitle {
+  color: #365E9B;
+  font-weight: bold;
+  font-size: large;
+  text-align: center;
+  padding: 5px;
 }

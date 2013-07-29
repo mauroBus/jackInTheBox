@@ -14,7 +14,7 @@ define([
 
       initialize: function(options) {
         this.template = ViewTemplate;
-        this.on('item5Clicked', this.showItemFive);
+        this.on('menuItemEvent', this.showItemFive);
 
         this.collection = new BrawlerCollection();
       },
@@ -48,8 +48,10 @@ define([
         };
       },
 
-      showItemFive: function() {
-        console.log('OMG! this is "super" (superTrigger), I can\'t believe it :D');
+      showItemFive: function(item) {
+        if (item === 'item5') {
+          console.log('heeey, I heard an item 5 click...');
+        }
       }
 
     });

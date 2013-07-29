@@ -1,25 +1,35 @@
 @import '../../../variables.less';
+@import '../../../mixins.less';
 
 .mainContent {
-  text-align: center;
   background-color: @colorMainContent;
   display: inline-block;
   width: 100%;
 
   .leftContent {
     float: left;
-    width: 20%;
+    width: 21%;
+    padding: 15px;
   }
   .rightContent {
     float: right;
-    width: 80%;
-  }
-
-  input.toggleSideBar {
-    display: block;
+    width: 71%;
+    padding: 15px;
   }
 
   .blueButton {
     background-color: darksalmon;
+  }
+
+  .toggleSideBar {
+    display: block;
+    width: 30px;
+    height: 30px;
+    background-color: gray;
+    cursor: pointer;
+    font-size: 30px;
+    .rounded-corners(20%);
+    text-align: center;
+    margin: 6px;
   }
 }

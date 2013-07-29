@@ -4,7 +4,7 @@ define([
     'basicViewModel',
     'pubsub'
   ],
-  function(ko, $, BasicViewModel, BrawlerPubSub) {
+  function(ko, $, BasicViewModel, EventEmmiter) {
     'use strict';
     /**
      * This is a container View Model that has a set of view models each assosiated
@@ -17,7 +17,7 @@ define([
      */
     var ContainerBrawlerViewModel = BasicViewModel.extend({
 
-      /* brawler_subViews (to private use only)
+      /* _brawler_subViews (private use only)
        * hash: {
        *   'view_name': {
        *     'view': (view_instance),
@@ -26,7 +26,7 @@ define([
        *    }
        *  }
        */
-      brawler_subViews: null,
+      _brawler_subViews: null,
 
       // to public access to the subviews.
       subViews: null, // hash with the subViews mapping: {'viewName': view_instance}
@@ -34,22 +34,25 @@ define([
       _superChannel: null,
 
       init: function(options) {
-        this.initChannels();
+
+        this._initSuperEventChannel();
 
         // calling super (BasicViewModel) init method
         this._super(options);
 
-        this.subViews = {};
+        this._brawler_subViews = this.createSubViews();
+        this._shareFamilyChannel();
 
-        this.brawler_subViews = this.createSubViews();
-        this.shareChannel();
+        this.subViews = {};
       },
 
       /**
        * To be overriden by subclasses.
        * Provides a place for instanciating subviews before renderization.
        */
-      createSubViews: function() {},
+      createSubViews: function() {
+        return {};
+      },
 
       render: function() {
         // calling super (BasicViewModel) render method
@@ -59,8 +62,8 @@ define([
 
       renderSubviews: function() {
         var viewName, viewData;
-        for (viewName in this.brawler_subViews) {
-          viewData = this.brawler_subViews[viewName];
+        for (viewName in this._brawler_subViews) {
+          viewData = this._brawler_subViews[viewName];
           this.addViewModel(viewData);
           viewData.view.render();
           this.subViews[viewName] = viewData.view;
@@ -82,7 +85,7 @@ define([
         // show the subviews:
         for (var viewName in this.subViews) {
           // show view only if it's not a dinamic view
-          if (this.brawler_subViews[viewName].type !== 'dinamic') {
+          if (this._brawler_subViews[viewName].type !== 'dinamic') {
             this.subViews[viewName].show();
           }
         }
@@ -109,7 +112,7 @@ define([
         this.removeSubViews();
         this._super();
         delete this.subViews;
-        delete this.brawler_subViews;
+        delete this._brawler_subViews;
       },
 
       removeSubView: function(viewName) {
@@ -117,27 +120,36 @@ define([
         if (view) {
           view.remove();
           delete this.subViews[viewName];
-          delete this.brawler_subViews[viewName];
+          delete this._brawler_subViews[viewName];
         }
       },
 
-      initChannels: function() {
-        // new PubSub for the mother view <-> sub-views family
-        this._familyChannel = new BrawlerPubSub();
-        this._familyChannel.augment(this);
-      },
-
-      setFamilyChannel: function(familyChannel) {
+      /**
+       * @private
+       */
+      _setFamilyChannel: function(familyChannel) {
+        EventEmmiter.mergeEvents(familyChannel, this._superChannel);
         this._superChannel = familyChannel;
-        this._superChannel.augment(this, 'superOn', 'superOff', 'superTrigger');
+        EventEmmiter.augment.call(this, this, this._superChannel, 'superOn', 'superOff', 'superTrigger');
       },
 
-      shareChannel: function() {
-        var viewName, view;
-        for (viewName in this.brawler_subViews) {
-          view = this.brawler_subViews[viewName].view;
-          view.setFamilyChannel(this._familyChannel);
+      /**
+       * @private
+       */
+      _shareFamilyChannel: function() {
+        var viewName, subView;
+        for (viewName in this._brawler_subViews) {
+          subView = this._brawler_subViews[viewName].view;
+          subView._setFamilyChannel(this._familyChannel);
         }
+      },
+
+      /**
+       * @private
+       */
+      _initSuperEventChannel: function() {
+        this._superChannel = {};
+        EventEmmiter.augment.call(this, this, this._superChannel, 'superOn', 'superOff', 'superTrigger');
       }
 
     });

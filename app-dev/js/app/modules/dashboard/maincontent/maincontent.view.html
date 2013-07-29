@@ -1,6 +1,6 @@
-<p>This is the <span data-bind="text: name"></span> Module</p>
+<div class="viewModelTitle">This is the <span data-bind="text: name"></span> Module</div>
 <p class="mainContentDetails"></p>
-<input type="button" class="btn toggleSideBar" value="toggle Side Bar">
-<div id="leftContent" class="leftContent"></div>
-<div class="rightContent"></div>
+<div class="btn toggleSideBar" data-bind="text: sideBarHidden() ? '+' : '-'" alt="Toggle Side Bar"></div>
 
+<div id="leftContent" class="leftContent viewModel"></div>
+<div id="rightContent" class="rightContent viewModel"></div>

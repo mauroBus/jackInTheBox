@@ -9,3 +9,5 @@ lessc "$buildCss"/main.less  > "$buildCss"/main.css
 
 # clearing main.less to avoid being compiled
 echo "" > "$buildCss"/main.less
+
+echo "Application built!"

@@ -9,6 +9,7 @@ define([
 
       initialize: function(options) {
         this.template = ViewTemplate;
+        this.on('asd', function(){});
       }
 
     });

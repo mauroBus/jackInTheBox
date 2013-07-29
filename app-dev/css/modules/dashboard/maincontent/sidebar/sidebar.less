@@ -1,32 +1,38 @@
 @import '../../../../variables.less';
+@import '../../../../mixins.less';
 
-.sideBar {
-  border: 2px solid @colorBorderBlue;
+nav[role="navigation"].sideBar {
+  ul {
+    li.sideBarHeader {
+      text-align: center;
+      a {
+        cursor: default;
+      }
+    }
 
-/*  .sideBarItem:hover {
-    background-color: lightgray;
-    cursor: pointer;
+    li.sideBarItem {
+      a {
+        display: block;
+        padding: 5px 15px;
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 1;
+
+        color: white;
+      }
+      a:focus,
+      a:hover {
+        background: #5D797C;
+      }
+      a:active {
+        background: #779197;
+      }
+    }
+
+    li.sideBarItem.active,
+    li.sideBarItem.active a:hover {
+      background-color: orange;
+    }
+
   }
-  .sideBarItem:active {
-    background-color: gray;
-  }*/
-}
-
-
-nav[role="navigation"] ul {
-  /*width: 25%;*/
-}
-nav[role="navigation"] ul li a {
-  display: block;
-  padding: 5px 15px;
-  font-size: 14px;
-  font-weight: bold;
-  line-height: 1;
-}
-nav[role="navigation"] ul li a:focus,
-nav[role="navigation"] ul li a:hover {
-  background: #eee;
-}
-nav[role="navigation"] ul li a:active {
-  background: #ddd;
 }
