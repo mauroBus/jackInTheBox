@@ -12,6 +12,7 @@ define([
       name: 'Main Content',
       details: 'Hey! We are inserting dinamics data-binds over here...',
       sideBarHidden: null,
+      eventCaughtMsg: null,
 
       /*
        * Definition of DINAMIC DATA-BIND content
@@ -33,12 +34,15 @@ define([
         this.template = ViewTemplate;
         this.sideBarHidden = ko.observable(false);
         this.count = 0;
+        this.eventCaughtMsg = ko.observableArray([]);
         this.on('itemEvent', this.sideBarClicked);
         this.on('itemEvent', this.propagateEventUp);
       },
 
       sideBarClicked: function(item) {
         this.count++;
+        this.eventCaughtMsg.push(item);
+
         if (this.count > 5) {
           this.off('itemEvent', this.sideBarClicked);
         }
@@ -79,8 +83,9 @@ define([
       },
 
       toggleSideBar: function() {
-        this.subViews['sideBar'].toggle();
-        this.sideBarHidden(!this.sideBarHidden());
+        this.router.navigate('greetings');
+        // this.subViews['sideBar'].toggle();
+        // this.sideBarHidden(!this.sideBarHidden());
       }
 
     });

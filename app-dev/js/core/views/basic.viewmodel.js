@@ -3,7 +3,8 @@ define([
     'knockout',
     'jquery',
     'jqueryui',
-    'pubsub'
+    'pubsub',
+    'jackBoxRouter'
   ],
   /**
    * This is a basic View Model that has the basic initialize functionality
@@ -12,19 +13,15 @@ define([
    * @version 0.6
    * @author  Mauro Buselli <mauro.buselli@globant.com>
    */
-  function(Inheritance, ko, $, jQueryUI, EventEmmiter) {
+  function(Inheritance, ko, $, jQueryUI, EventEmmiter, JackBoxRouter) {
     'use strict';
     /**
-    * This is a basic View Model that has the basic initialize functionality
-    * to be inherit for every view model.
-    * @version 1.1
-    * @author  Mauro Buselli <mauro.buselli@globant.com>
     * @params Object options options:{ [ el: id/class ][, template: ] [, effects: {...}]  } -> effects: jQuery UI effects.
     */
     var BasicBrawlerViewModel = Class.extend(
-	/** @lends BasicViewModel.prototype */
+    /** @lends BasicViewModel.prototype */
     {
-      defaultEffects: { // default effects
+      defaultEffects: { // default show/hide effects
         onShow: {
           effect: 'fade',
           easing: 'linear',
@@ -47,7 +44,7 @@ define([
       el: '',
       $el: null,
 
-      // View Model effects applied on show and on hide.
+      // View Model effects applied on show and hide.
       effects: {},
 
       // View Model UUID. Unique View Model instance ID.
@@ -65,16 +62,22 @@ define([
       // Brawler View Publish Subscribe channel
       _familyChannel: null,
 
+      // Main Router to allow viewModels to navigate between the application modules.
+      router: null,
+
       /**
-       * init Recibes the main options to set the basic attributes of the view.
-       * There is no need to call this method in the instantiation of any sub-viewModel, it is auto executable when extends BasicViewModel.
+       * recibes the main options to set the basic attributes of the view.
+       * There is no need to call this method in the instantiation of any sub-viewModel,
+       *  it is auto executable when extends BasicViewModel.
        * @class BasicViewModel
        * @augments BasicViewModel
        * @constructs
+       * @private
        * @params Object options { [ el: id/class ][, template: ] [, effects: {...}]  } -> effects: jQuery UI effects.
        */
       init: function(options) {
         this.effects = $.extend(true, {}, this.defaultEffects);
+        this.router = JackBoxRouter;
 
         if (!options) {
           this.template = 'dummy HTML content...';

@@ -15,7 +15,10 @@ define(function() {
       'containerViewModel': 'core/views/container.viewmodel',
       'brawlerModel': 'core/models/brawler.model',
       'brawlerCollection': 'core/models/brawler.collection',
-      'pubsub': 'core/pubsub/pubsub'
+      'pubsub': 'core/pubsub/pubsub',
+      'routie': './libs/routie/routie',
+      'jackBoxRouter': 'core/router/jackBoxRouter',
+      'jackBoxRouteManager': 'core/router/jackBoxRouteManager'
     },
     shim: {
       'jqueryui': {
@@ -27,9 +30,12 @@ define(function() {
       },
       'class': {
         exports: 'Class'
+      },
+      'routie': {
+        exports: 'Routie'
       }
     },
-    waitSeconds: 20
+    waitSeconds: 5
   });
 
 });
