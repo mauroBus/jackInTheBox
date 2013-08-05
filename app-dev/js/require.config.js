@@ -16,7 +16,8 @@ define(function() {
       'brawlerModel': 'core/models/brawler.model',
       'brawlerCollection': 'core/models/brawler.collection',
       'pubsub': 'core/pubsub/pubsub',
-      'routie': './libs/routie/routie',
+      // 'routie': './libs/routie/routie',
+      'routie': './libs/router/crossroads',
       'jackBoxRouter': 'core/router/jackBoxRouter',
       'jackBoxRouteManager': 'core/router/jackBoxRouteManager'
     },

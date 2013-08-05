@@ -13,11 +13,15 @@ define([
       this.routes = {};
 
       this.currentRoute = null;
+      this.errorRoute = null;
+
+      // var routie = new Router().init();
 
       this.addRouteManager = function(route, manager) {
         this.routes[route] = this.routes[route] || [];
         this.routes[route].push(manager);
-        routie(route, this.navigateTos.bind(this, route));
+        Routie.addRoute(route, this.navigateTo.bind(this, route));
+        // routie.on(route, function(){console.log('asdasdasd');});
       };
 
       this.getRouteManagers = function(route) {
@@ -29,19 +33,28 @@ define([
 
 
       this.navigate = function(route) {
-        routie(route);
+        console.log('navigating');
+        Routie.parse(route);
       };
 
       /**
        * Navigates to a route.
        * @param  {String} route Next route to navigate
        */
-      this.navigateTos = function(route) {
+      this.navigateTo = function(route) {
         var activeRouteManagers = this.getRouteManagers(this.currentRoute);
         var routeManagers = this.getRouteManagers(route);
         var rm;
         var args = Array.prototype.slice.call(arguments, 1);
         var activeRMNumber = activeRouteManagers.length;
+
+        if (!routeManagers.length) {
+          console.log(this.errorRoute);
+          if (this.errorRoute) {
+            this.navigate(this.errorRoute);
+          }
+          return;
+        }
 
         var discountRM = function() {
           activeRMNumber--;
@@ -68,6 +81,14 @@ define([
         }
 
         this.currentRoute = route;
+      };
+
+      /**
+       * sets the default navigation route when the asked route dont exists.
+       * @param  {String} route The default error route
+       */
+      this.onErrorNavigate = function(route) {
+        this.errorRoute = route;
       };
 
     };
