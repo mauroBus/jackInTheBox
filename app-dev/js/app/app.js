@@ -15,10 +15,11 @@ define([
       Router.addRouteManager('greetings', new GreetingsRouteManager());
       Router.addRouteManager('moduleA', new ModuleARouteManager());
       Router.addRouteManager('moduleB', new ModuleBRouteManager());
-      Router.addRouteManager('error', new ErrorRouteManager());
-      Router.onErrorNavigate('error');
+      Router.addDefaultRouteManager('error', new ErrorRouteManager());
 
       Router.navigate('dashboard');
+
+      Router.init();
     };
 
     return {

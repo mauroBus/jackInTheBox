@@ -19,7 +19,6 @@
     this.fns = [];
     this.params = {};
     this.regex = pathToRegexp(this.path, this.keys, false, false);
-
   };
 
   Route.prototype.addHandler = function(fn) {
@@ -92,6 +91,10 @@
     return new RegExp('^' + path + '$', sensitive ? '' : 'i');
   };
 
+
+
+
+
   var addHandler = function(path, fn) {
     var s = path.split(' ');
     var name = (s.length == 2) ? s[0] : null;
@@ -104,21 +107,31 @@
     map[path].addHandler(fn);
   };
 
-  var routie = function(path, fn) {
+
+
+
+
+  var Routie = function() {
+    this.defaultRoute = null;
+  };
+
+  Routie.prototype.route = function(path, fn, isDefault) {
+    this.defaultRoute = isDefault ? path : this.defaultRoute;
+
     if (typeof fn == 'function') {
       addHandler(path, fn);
-      routie.reload();
+      this.reload();
     } else if (typeof path == 'object') {
       for (var p in path) {
         addHandler(p, path[p]);
       }
-      routie.reload();
+      this.reload();
     } else if (typeof fn === 'undefined') {
-      routie.navigate(path);
+      this.navigate(path);
     }
   };
 
-  routie.lookup = function(name, obj) {
+  Routie.prototype.lookup = function(name, obj) {
     for (var i = 0, c = routes.length; i < c; i++) {
       var route = routes[i];
       if (route.name == name) {
@@ -127,19 +140,19 @@
     }
   };
 
-  routie.remove = function(path, fn) {
+  Routie.prototype.remove = function(path, fn) {
     var route = map[path];
     if (!route)
       return;
     route.removeHandler(fn);
   };
 
-  routie.removeAll = function() {
+  Routie.prototype.removeAll = function() {
     map = {};
     routes = [];
   };
 
-  routie.navigate = function(path, options) {
+  Routie.prototype.navigate = function(path, options) {
     options = options || {};
     var silent = options.silent || false;
 
@@ -158,9 +171,17 @@
     }, 1);
   };
 
-  routie.noConflict = function() {
+  Routie.prototype.noConflict = function() {
     w[reference] = oldReference;
-    return routie;
+    return this;
+  };
+
+  Routie.prototype.setDefaultRoute = function(path) {
+    this.defaultRoute = path;
+  };
+
+  Routie.prototype.init = function() {
+    addListener();
   };
 
   var getHash = function() {
@@ -176,7 +197,7 @@
     return false;
   };
 
-  var hashChanged = routie.reload = function() {
+  var hashChanged = Routie.prototype.reload = function() {
     var hash = getHash();
     for (var i = 0, c = routes.length; i < c; i++) {
       var route = routes[i];
@@ -184,25 +205,30 @@
         return;
       }
     }
+    // default route:
+    console.log(this.defaultRoute);
+    if (this.defaultRoute) {
+
+      this.navigate(this.defaultRoute);
+    }
   };
 
   var addListener = function() {
     if (w.addEventListener) {
-      w.addEventListener('hashchange', hashChanged, false);
+      w.addEventListener('hashchange', hashChanged.bind(this), false);
     } else {
-      w.attachEvent('onhashchange', hashChanged);
+      w.attachEvent('onhashchange', hashChanged.bind(this));
     }
   };
 
   var removeListener = function() {
     if (w.removeEventListener) {
-      w.removeEventListener('hashchange', hashChanged);
+      w.removeEventListener('hashchange', hashChanged.bind(this));
     } else {
-      w.detachEvent('onhashchange', hashChanged);
+      w.detachEvent('onhashchange', hashChanged.bind(this));
     }
   };
-  addListener();
 
-  w[reference] = routie;
+  w[reference] = Routie;
 
 })(window);

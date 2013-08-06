@@ -4,7 +4,7 @@
  */
 define([
     'jquery',
-    'routie'
+    'router'
   ], function($, Routie) {
 
     var JackBoxRouter = function() {
@@ -15,13 +15,26 @@ define([
       this.currentRoute = null;
       this.errorRoute = null;
 
-      // var routie = new Router().init();
+      var router = new routie();
 
-      this.addRouteManager = function(route, manager) {
+      this.init = function() {
+        router.init();
+      };
+
+      this.addLocalRouteManager = function(route, manager) {
         this.routes[route] = this.routes[route] || [];
         this.routes[route].push(manager);
-        Routie.addRoute(route, this.navigateTo.bind(this, route));
+      };
+
+      this.addRouteManager = function(route, manager) {
+        this.addLocalRouteManager(route, manager);
+        router.route(route, this.navigateTo.bind(this, route));
         // routie.on(route, function(){console.log('asdasdasd');});
+      };
+
+      this.addDefaultRouteManager = function(route, manager) {
+        this.addLocalRouteManager(route, manager);
+        router.route(route, this.navigateTo.bind(this, route), true);
       };
 
       this.getRouteManagers = function(route) {
@@ -33,8 +46,7 @@ define([
 
 
       this.navigate = function(route) {
-        console.log('navigating');
-        Routie.parse(route);
+        router.route(route);
       };
 
       /**
@@ -64,8 +76,9 @@ define([
         };
 
         var awakeRMs = function() {
-          for (rm in routeManagers) {
-            routeManagers[rm].load.apply(routeManagers[rm], args);
+          var mgr;
+          for (mgr in routeManagers) {
+            routeManagers[mgr].load.apply(routeManagers[mgr], args);
           }
         };
 
