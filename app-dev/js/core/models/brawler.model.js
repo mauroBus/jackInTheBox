@@ -8,7 +8,7 @@ define([
     /**
      * The basic application model that has the basic functionality
      *  to be extended for every model in the application.
-     * @author  Mauro Buselli <mauro.buselli@globant.com>
+     * @author  Mauro Buselli <maurobuselli@gmail.com>
      */
     var BrawlerModel = Class.extend({
 

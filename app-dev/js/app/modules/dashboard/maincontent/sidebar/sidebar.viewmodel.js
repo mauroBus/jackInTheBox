@@ -2,9 +2,8 @@ define([
     'knockout',
     'jquery',
     'basicViewModel',
-    'text!./sidebar.view.html',
-    'pubsub'
-  ], function(ko, $, BasicViewModel, ViewTemplate, PubSub) {
+    'text!./sidebar.view.html'
+  ], function(ko, $, BasicViewModel, ViewTemplate) {
 
     var SideBarModule = BasicViewModel.extend({
 

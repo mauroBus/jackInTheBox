@@ -10,15 +10,19 @@ define([
     ModuleBRouteManager, ErrorRouteManager) {
 
     var init = function() {
-      // var router = new Router();
-      Router.addRouteManager('dashboard', new DashboardRouteManager());
+      var dashboardRM = new DashboardRouteManager();
+
+      Router.addRouteManager('*default', new ErrorRouteManager());
+      Router.addRouteManager('', dashboardRM);
+      Router.addRouteManager('dashboard', dashboardRM);
       Router.addRouteManager('greetings', new GreetingsRouteManager());
       Router.addRouteManager('moduleA', new ModuleARouteManager());
       Router.addRouteManager('moduleB', new ModuleBRouteManager());
-      Router.addRouteManager('error', new ErrorRouteManager());
-      Router.onErrorNavigate('error');
+      Router.setDefaultRoute('dashboard');
+      // Router.setDefaultRoute('dashboard');
 
-      Router.navigate('dashboard');
+      Router.start();
+      // Router.navigate('dashboard');
     };
 
     return {

@@ -2,7 +2,7 @@ define([
     'knockout',
     'jquery',
     'basicViewModel',
-    'pubsub'
+    'eventmanager'
   ],
   function(ko, $, BasicViewModel, EventEmmiter) {
     'use strict';
@@ -12,7 +12,7 @@ define([
      *  for every view model.
      * @constructor
      * @version 1.0
-     * @author  Mauro Buselli <mauro.buselli@globant.com>
+     * @author  Mauro Buselli <maurobuselli@gmail.com>
      * @params obj options options : { [ el: id/class ][, template: ] [, effects: ] [, regions]  }
      */
     var ContainerBrawlerViewModel = BasicViewModel.extend({
@@ -102,25 +102,27 @@ define([
         return this._super(fx);
       },
 
-      removeSubViews: function() {
+      destroySubViews: function() {
         for (var view in this.subViews) {
-          this.subViews[view].remove();
+          this.subViews[view].destroy();
         }
       },
 
-      remove: function() {
-        this.removeSubViews();
+      destroy: function() {
+        this.destroySubViews();
         this._super();
         delete this.subViews;
         delete this._brawler_subViews;
       },
 
-      removeSubView: function(viewName) {
+      destroySubView: function(viewName) {
         var view = this.subViews[viewName];
         if (view) {
-          view.remove();
+          view.destroy();
           delete this.subViews[viewName];
           delete this._brawler_subViews[viewName];
+          this.subViews[viewName] = null;
+          this._brawler_subViews[viewName] = null;
         }
       },
 

@@ -15,9 +15,11 @@ define(function() {
       'containerViewModel': 'core/views/container.viewmodel',
       'brawlerModel': 'core/models/brawler.model',
       'brawlerCollection': 'core/models/brawler.collection',
-      'pubsub': 'core/pubsub/pubsub',
+      'eventmanager': 'core/eventmanager/eventmanager',
       // 'routie': './libs/routie/routie',
-      'routie': './libs/router/crossroads',
+      // 'routie': './libs/router/crossroads',
+      // 'signals': './libs/router/signals',
+      'backRouter': 'core/router/back.router',
       'jackBoxRouter': 'core/router/jackBoxRouter',
       'jackBoxRouteManager': 'core/router/jackBoxRouteManager'
     },

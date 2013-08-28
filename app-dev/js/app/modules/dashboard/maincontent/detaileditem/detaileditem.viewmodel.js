@@ -2,9 +2,8 @@ define([
     'knockout',
     'jquery',
     'basicViewModel',
-    'text!./detaileditem.view.html',
-    'pubsub'
-  ], function(ko, $, BasicViewModel, ViewTemplate, PubSub) {
+    'text!./detaileditem.view.html'
+  ], function(ko, $, BasicViewModel, ViewTemplate) {
 
     var DetailedItemViewModel = BasicViewModel.extend({
 

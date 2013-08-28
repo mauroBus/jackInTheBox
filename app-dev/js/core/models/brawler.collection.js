@@ -9,7 +9,7 @@ define([
     /**
      * The basic Application Collection that has the basic functionality
      *  to be extended for every collection in the application.
-     * @author  Mauro Buselli <mauro.buselli@globant.com>
+     * @author  Mauro Buselli <maurobuselli@gmail.com>
      */
     window.BrawlerCollection = BrawlerModel.extend({
 

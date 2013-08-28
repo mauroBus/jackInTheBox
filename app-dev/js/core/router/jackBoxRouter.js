@@ -4,8 +4,8 @@
  */
 define([
     'jquery',
-    'routie'
-  ], function($, Routie) {
+    'backRouter'
+  ], function($, Router) {
 
     var JackBoxRouter = function() {
 
@@ -13,18 +13,29 @@ define([
       this.routes = {};
 
       this.currentRoute = null;
-      this.errorRoute = null;
+      this.defaultRoute = null;
+      this.router = null;
+
+      this.init = function() {
+        this.router = new Router();
+      };
+
+      this.start = function() {
+        Router.history.start();
+      };
 
       // var routie = new Router().init();
 
       this.addRouteManager = function(route, manager) {
         this.routes[route] = this.routes[route] || [];
         this.routes[route].push(manager);
-        Routie.addRoute(route, this.navigateTo.bind(this, route));
+
+        // Routie.addRoute(route, this._navigateTo.bind(this, route));
         // routie.on(route, function(){console.log('asdasdasd');});
+        this.router.route(route, '', this._navigateTo.bind(this, route));
       };
 
-      this.getRouteManagers = function(route) {
+      this._getRouteManagers = function(route) {
         var rms;
         // TODO: routes matching
         rms = this.routes[route] || [];
@@ -33,25 +44,25 @@ define([
 
 
       this.navigate = function(route) {
-        console.log('navigating');
-        Routie.parse(route);
+        // Routie.parse(route);
+        this.router.navigate(route, {trigger: true});
       };
 
       /**
        * Navigates to a route.
        * @param  {String} route Next route to navigate
+       * @private
        */
-      this.navigateTo = function(route) {
-        var activeRouteManagers = this.getRouteManagers(this.currentRoute);
-        var routeManagers = this.getRouteManagers(route);
+      this._navigateTo = function(route) {
+        var activeRouteManagers = this._getRouteManagers(this.currentRoute);
+        var routeManagers = this._getRouteManagers(route);
         var rm;
         var args = Array.prototype.slice.call(arguments, 1);
         var activeRMNumber = activeRouteManagers.length;
 
         if (!routeManagers.length) {
-          console.log(this.errorRoute);
-          if (this.errorRoute) {
-            this.navigate(this.errorRoute);
+          if (this.defaultRoute) {
+            this.navigate(this.defaultRoute);
           }
           return;
         }
@@ -87,12 +98,20 @@ define([
        * sets the default navigation route when the asked route dont exists.
        * @param  {String} route The default error route
        */
-      this.onErrorNavigate = function(route) {
-        this.errorRoute = route;
+      this.setDefaultRoute = function(route) {
+        if (!this.routes[route]) {
+          throw new Error('JackInTheBox <Router>: Error: "' + route +
+            '" route does not exist to be setted as the error route.');
+        }
+        this.defaultRoute = route;
+        // this.router.route('*default', '', this._navigateTo.bind(this, route));
       };
 
     };
 
-    return new JackBoxRouter();
+    var jackBoxRouter = new JackBoxRouter();
+    jackBoxRouter.init();
+
+    return jackBoxRouter;
   }
 );

@@ -20,7 +20,7 @@ define([
             that = this;
 
         this.viewModel.hide().done(function() {
-          that.viewModel.remove();
+          that.viewModel.destroy();
           that.viewModel = null;
           dfd.resolve();
         });

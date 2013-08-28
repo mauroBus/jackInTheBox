@@ -3,7 +3,7 @@ define([
     'knockout',
     'jquery',
     'jqueryui',
-    'pubsub',
+    'eventmanager',
     'jackBoxRouter'
   ],
   /**
@@ -11,7 +11,7 @@ define([
    * to be inherit for every view model.
    * @exports basic/view/model
    * @version 0.6
-   * @author  Mauro Buselli <mauro.buselli@globant.com>
+   * @author  Mauro Buselli <maurobuselli@gmail.com>
    */
   function(Inheritance, ko, $, jQueryUI, EventEmmiter, JackBoxRouter) {
     'use strict';
@@ -247,7 +247,7 @@ define([
        * Removes this view model from the DOM and
        *  clean up the memory.
        */
-      remove: function() {
+      destroy: function() {
         this.$el.html('');
         delete this.el;
         delete this.$el;
