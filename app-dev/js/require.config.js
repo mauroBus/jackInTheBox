@@ -19,6 +19,7 @@ define(function() {
       // 'routie': './libs/routie/routie',
       // 'routie': './libs/router/crossroads',
       // 'signals': './libs/router/signals',
+      // 'router': './libs/routie/routie', //./libs/router/crossroads
       'backRouter': 'core/router/back.router',
       'jackBoxRouter': 'core/router/jackBoxRouter',
       'jackBoxRouteManager': 'core/router/jackBoxRouteManager'
@@ -33,9 +34,6 @@ define(function() {
       },
       'class': {
         exports: 'Class'
-      },
-      'routie': {
-        exports: 'Routie'
       }
     },
     waitSeconds: 5

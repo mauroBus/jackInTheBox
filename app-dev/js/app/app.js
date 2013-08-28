@@ -18,9 +18,8 @@ define([
       Router.addRouteManager('greetings', new GreetingsRouteManager());
       Router.addRouteManager('moduleA', new ModuleARouteManager());
       Router.addRouteManager('moduleB', new ModuleBRouteManager());
-      Router.setDefaultRoute('dashboard');
-      // Router.setDefaultRoute('dashboard');
 
+      // Router.setDefaultRoute('dashboard');
       Router.start();
       // Router.navigate('dashboard');
     };

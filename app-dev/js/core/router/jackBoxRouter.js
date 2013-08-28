@@ -24,14 +24,9 @@ define([
         Router.history.start();
       };
 
-      // var routie = new Router().init();
-
       this.addRouteManager = function(route, manager) {
         this.routes[route] = this.routes[route] || [];
         this.routes[route].push(manager);
-
-        // Routie.addRoute(route, this._navigateTo.bind(this, route));
-        // routie.on(route, function(){console.log('asdasdasd');});
         this.router.route(route, '', this._navigateTo.bind(this, route));
       };
 
@@ -44,7 +39,6 @@ define([
 
 
       this.navigate = function(route) {
-        // Routie.parse(route);
         this.router.navigate(route, {trigger: true});
       };
 
@@ -75,8 +69,9 @@ define([
         };
 
         var awakeRMs = function() {
-          for (rm in routeManagers) {
-            routeManagers[rm].load.apply(routeManagers[rm], args);
+          var mgr;
+          for (mgr in routeManagers) {
+            routeManagers[mgr].load.apply(routeManagers[mgr], args);
           }
         };
 
